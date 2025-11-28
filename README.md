@@ -3,465 +3,291 @@
 <head>
 <meta charset="UTF-8">
 <title>سوق فلسطيني</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body {
-    font-family: Arial;
-    margin: 0;
-    background:#f3f3f3;
-}
+body { margin:0; font-family:Tahoma; background:#f4f4f4; }
 
-/* الهيدر */
+/* هيدر */
 header {
-    background:#222;
-    padding:15px;
-    color:white;
-    text-align:center;
-    font-size:22px;
-    font-weight:bold;
+  background:#000;
+  padding:15px;
+  color:#d4af37;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+  border-bottom:3px solid #d4af37;
 }
 
-/* الأقسام */
-#categories {
-    display:grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap:12px;
-    padding:15px;
+.container { padding:15px; }
+
+/* أزرار */
+.btn {
+  background:#d4af37;
+  border:none;
+  padding:12px;
+  border-radius:10px;
+  font-size:16px;
+  cursor:pointer;
+  width:100%;
+  margin-top:10px;
+}
+.btn:hover { opacity:0.85; }
+
+/* كروت */
+.card {
+  background:white;
+  padding:15px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  margin-bottom:15px;
+}
+
+/* مدخلات */
+input, select, textarea {
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid #aaa;
+  margin-top:10px;
+  font-size:15px;
+}
+textarea { height:120px; }
+
+/* شبكة الأقسام والإعلانات */
+.grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px,1fr));
+  gap:15px;
 }
 
 .cat {
-    background:white;
-    padding:20px 10px;
-    border-radius:12px;
-    text-align:center;
-    font-size:18px;
-    cursor:pointer;
-    font-weight:bold;
-    border:1px solid #ddd;
-    transition:0.2s;
+  background:white;
+  padding:25px 10px;
+  text-align:center;
+  font-size:19px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  cursor:pointer;
+  font-weight:bold;
 }
-.cat:hover { background:#e2e2e2; }
+.cat:hover { background:#eee; }
 
-/* steps */
-.step {
-    display:none;
-    padding:15px;
+/* إعلان */
+.ad-box {
+  background:white;
+  border:1px solid #ccc;
+  padding:12px;
+  border-radius:12px;
+  cursor:pointer;
 }
-
-input, select, textarea {
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    border-radius:10px;
-    border:1px solid #aaa;
-    font-size:16px;
-}
-
-textarea { height:120px; resize:none; }
-
-/* زر */
-button {
-    width:100%;
-    padding:15px;
-    border:none;
-    margin-top:15px;
-    background:#222;
-    color:white;
-    border-radius:10px;
-    font-size:18px;
-    cursor:pointer;
-}
-button:hover { opacity:0.8; }
-
-/* صور المعاينة */
-#preview img {
-    width:90px;
-    height:90px;
-    object-fit:cover;
-    border-radius:10px;
-    border:1px solid #bbb;
+.ad-box img{
+  width:100%;
+  height:160px;
+  border-radius:10px;
+  object-fit:cover;
 }
 
-.preview-box {
-    position:relative;
-    display:inline-block;
-    margin:5px;
+/* صفحة التفاصيل */
+.big-img {
+  width:100%;
+  height:260px;
+  border-radius:12px;
+  object-fit:cover;
+  margin-bottom:10px;
 }
 
-.preview-box button {
-    position:absolute;
-    top:-5px; right:-5px;
-    background:red;
-    width:22px; height:22px;
-    font-size:14px;
-    border-radius:50%;
-    padding:0;
-}
+/* إخفاء الصفحات */
+.page { display:none; }
 </style>
 </head>
-
 <body>
 
 <header>سوق فلسطيني</header>
 
-<!-- -------------------- الأقسام -------------------- -->
-<div id="categories">
-    <div class="cat" onclick="chooseCategory('سيارات')">🚗 سيارات</div>
-    <div class="cat" onclick="chooseCategory('عقارات')">🏠 عقارات</div>
-    <div class="cat" onclick="chooseCategory('جوالات')">📱 جوالات</div>
-    <div class="cat" onclick="chooseCategory('وظائف')">💼 وظائف</div>
-    <div class="cat" onclick="chooseCategory('الكترونيات')">💻 الكترونيات</div>
-    <div class="cat" onclick="chooseCategory('أثاث')">🪑 أثاث</div>
+<div class="container">
+
+<!-- ---------------- الصفحة الرئيسية ---------------- -->
+<div id="home" class="page">
+
+  <div class="card">
+    <input id="searchText" placeholder="ابحث عن إعلان...">
+    <button class="btn" onclick="searchAds()">بحث 🔍</button>
+    <button class="btn" onclick="openPage('addAd')">➕ أضف إعلان</button>
+    <button class="btn" onclick="openPage('ads')">📢 كل الإعلانات</button>
+  </div>
+
+  <h3 style="color:#d4af37">الأقسام</h3>
+  <div class="grid">
+    <div class="cat" onclick="filterCategory('سيارات')">🚗 سيارات</div>
+    <div class="cat" onclick="filterCategory('عقارات')">🏠 عقارات</div>
+    <div class="cat" onclick="filterCategory('جوالات')">📱 جوالات</div>
+    <div class="cat" onclick="filterCategory('وظائف')">💼 وظائف</div>
+    <div class="cat" onclick="filterCategory('الكترونيات')">💻 إلكترونيات</div>
+    <div class="cat" onclick="filterCategory('أثاث')">🪑 أثاث</div>
+  </div>
+
 </div>
 
 
-<!-- -------------------- الخطوة 1: القسم -------------------- -->
-<div id="step1" class="step">
-    <h2>القسم المختار: <span id="selectedCat" style="color:green"></span></h2>
-    <button onclick="goToStep(2)">التالي</button>
+<!-- ---------------- صفحة الإعلانات ---------------- -->
+<div id="ads" class="page">
+  <button class="btn" onclick="openPage('home')">⬅ رجوع</button>
+  <h2 style="color:#d4af37">الإعلانات</h2>
+  <div id="adsContainer"></div>
 </div>
 
 
-<!-- -------------------- الخطوة 2: تفاصيل الإعلان -------------------- -->
-<div id="step2" class="step">
+<!-- ---------------- صفحة تفاصيل إعلان ---------------- -->
+<div id="details" class="page">
+  <button class="btn" onclick="openPage('ads')">⬅ رجوع</button>
+  <img id="d_img" class="big-img">
+  <h2 id="d_title"></h2>
+  <h3 style="color:#d4af37" id="d_price"></h3>
+  <p id="d_desc"></p>
+  <p><b>المدينة:</b> <span id="d_city"></span></p>
+  <p><b>الهاتف:</b> <span id="d_phone"></span></p>
 
-    <h2>تفاصيل الإعلان</h2>
-
-    <label>عنوان الإعلان</label>
-    <input type="text" id="title">
-
-    <label>السعر</label>
-    <input type="number" id="price">
-
-    <label>الوصف</label>
-    <textarea id="desc"></textarea>
-
-    <label>الصور</label>
-    <input type="file" id="images" multiple accept="image/*">
-    <div id="preview"></div>
-
-    <button onclick="goToStep(3)">التالي</button>
+  <button id="waBtn" class="btn">📲 واتساب</button>
+  <button id="mailBtn" class="btn">📧 بريد إلكتروني</button>
 </div>
 
 
-<!-- -------------------- الخطوة 3: معلومات المعلن -------------------- -->
-<div id="step3" class="step">
+<!-- ---------------- صفحة إضافة إعلان ---------------- -->
+<div id="addAd" class="page">
 
-    <h2>معلومات المعلن</h2>
+  <button class="btn" onclick="openPage('home')">⬅ رجوع</button>
 
-    <label>الاسم</label>
-    <input type="text" id="name">
+  <h2 style="color:#d4af37">إضافة إعلان</h2>
 
-    <label>رقم الهاتف</label>
-    <input type="text" id="phone">
+  <label>عنوان الإعلان</label>
+  <input id="title">
 
-    <label>المدينة</label>
-    <select id="city">
-        <option>غزة</option>
-        <option>خان يونس</option>
-        <option>رفح</option>
-        <option>النصيرات</option>
-        <option>جباليا</option>
-    </select>
+  <label>القسم</label>
+  <select id="category">
+    <option>سيارات</option>
+    <option>عقارات</option>
+    <option>جوالات</option>
+    <option>وظائف</option>
+    <option>الكترونيات</option>
+    <option>أثاث</option>
+  </select>
 
-    <button onclick="publishAd()">نشر الإعلان</button>
+  <label>السعر</label>
+  <input type="number" id="price">
+
+  <label>الوصف</label>
+  <textarea id="desc"></textarea>
+
+  <label>الصورة</label>
+  <input type="file" id="imgInput" accept="image/*">
+
+  <label>المدينة</label>
+  <select id="city">
+    <option>غزة</option>
+    <option>رفح</option>
+    <option>خان يونس</option>
+    <option>جباليا</option>
+    <option>النصيرات</option>
+  </select>
+
+  <label>الهاتف</label>
+  <input id="phone">
+
+  <label>البريد الإلكتروني</label>
+  <input id="email">
+
+  <button class="btn" onclick="publishAd()">📢 نشر الإعلان</button>
+
 </div>
 
+</div>
 
-
-<!-- -------------------- السكربت -------------------- -->
 <script>
 
-function chooseCategory(cat){
-    document.getElementById("selectedCat").textContent = cat;
-    document.getElementById("categories").style.display="none";
-    goToStep(1);
+function openPage(id){
+  document.querySelectorAll(".page").forEach(p => p.style.display="none");
+  document.getElementById(id).style.display="block";
 }
+openPage("home");
 
-function goToStep(num){
-    document.querySelectorAll(".step").forEach(s => s.style.display="none");
-    document.getElementById("step"+num).style.display="block";
-}
+let selectedImgBase64 = "";
 
-
-
-/* -------------------- رفع ومعاينة الصور -------------------- */
-const inputImages = document.getElementById("images");
-const preview = document.getElementById("preview");
-
-inputImages.onchange = () => {
-    preview.innerHTML = "";
-
-    [...inputImages.files].forEach((file, index) => {
-        const reader = new FileReader();
-
-        reader.onload = e => {
-            const box = document.createElement("div");
-            box.className = "preview-box";
-
-            box.innerHTML = `
-                <img src="${e.target.result}">
-                <button onclick="removeImage(${index})">×</button>
-            `;
-            preview.appendChild(box);
-        };
-
-        reader.readAsDataURL(file);
-    });
+/* قراءة الصورة */
+document.getElementById("imgInput").onchange = e =>{
+  let file = e.target.files[0];
+  let reader = new FileReader();
+  reader.onload = () => selectedImgBase64 = reader.result;
+  reader.readAsDataURL(file);
 };
 
-
-function removeImage(index){
-    let dt = new DataTransfer();
-
-    [...inputImages.files]
-    .filter((file, i) => i !== index)
-    .forEach(file => dt.items.add(file));
-
-    inputImages.files = dt.files;
-    inputImages.onchange();
-}
-
-
-
-/* -------------------- نشر الإعلان -------------------- */
+/* نشر الإعلان */
 function publishAd(){
-    alert("تم نشر إعلانك بنجاح 🎉");
+  let ad = {
+    id: Date.now(),
+    title: title.value,
+    category: category.value,
+    price: price.value,
+    desc: desc.value,
+    city: city.value,
+    phone: phone.value,
+    email: email.value,
+    img: selectedImgBase64
+  };
+
+  let ads = JSON.parse(localStorage.getItem("ads") || "[]");
+  ads.push(ad);
+  localStorage.setItem("ads", JSON.stringify(ads));
+
+  alert("تم نشر الإعلان ✔");
+  openPage("home");
 }
 
-</script>
+/* عرض الإعلانات */
+function loadAds(filter=null, search=null){
+  let ads = JSON.parse(localStorage.getItem("ads") || "[]");
+  let box = document.getElementById("adsContainer");
 
-</body>
-</html>
+  if(filter) ads = ads.filter(a => a.category === filter);
+  if(search) ads = ads.filter(a => a.title.includes(search) || a.desc.includes(search));
 
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<title>سوق فلسطيني</title>
-<style>
-body {
-    font-family: Arial;
-    margin: 0;
-    background:#f3f3f3;
+  box.innerHTML = "";
+
+  ads.forEach(a=>{
+    box.innerHTML += `
+    <div class="ad-box" onclick="openDetails(${a.id})">
+      <img src="${a.img}">
+      <h3>${a.title}</h3>
+      <div style="color:#d4af37;font-weight:bold">${a.price} شيكل</div>
+      <small>${a.city}</small>
+    </div>`;
+  });
+
+  openPage("ads");
 }
 
-/* الهيدر */
-header {
-    background:#222;
-    padding:15px;
-    color:white;
-    text-align:center;
-    font-size:22px;
-    font-weight:bold;
+/* تفاصيل إعلان */
+function openDetails(id){
+  let ads = JSON.parse(localStorage.getItem("ads") || "[]");
+  let a = ads.find(x=>x.id==id);
+
+  d_img.src = a.img;
+  d_title.textContent = a.title;
+  d_price.textContent = a.price + " شيكل";
+  d_desc.textContent = a.desc;
+  d_city.textContent = a.city;
+  d_phone.textContent = a.phone;
+
+  waBtn.onclick = () => open("https://wa.me/" + a.phone);
+  mailBtn.onclick = () => open("mailto:" + a.email);
+
+  openPage("details");
 }
 
-/* الأقسام */
-#categories {
-    display:grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap:12px;
-    padding:15px;
-}
+/* البحث */
+function searchAds(){ loadAds(null, searchText.value); }
 
-.cat {
-    background:white;
-    padding:20px 10px;
-    border-radius:12px;
-    text-align:center;
-    font-size:18px;
-    cursor:pointer;
-    font-weight:bold;
-    border:1px solid #ddd;
-    transition:0.2s;
-}
-.cat:hover { background:#e2e2e2; }
-
-/* steps */
-.step {
-    display:none;
-    padding:15px;
-}
-
-input, select, textarea {
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    border-radius:10px;
-    border:1px solid #aaa;
-    font-size:16px;
-}
-
-textarea { height:120px; resize:none; }
-
-/* زر */
-button {
-    width:100%;
-    padding:15px;
-    border:none;
-    margin-top:15px;
-    background:#222;
-    color:white;
-    border-radius:10px;
-    font-size:18px;
-    cursor:pointer;
-}
-button:hover { opacity:0.8; }
-
-/* صور المعاينة */
-#preview img {
-    width:90px;
-    height:90px;
-    object-fit:cover;
-    border-radius:10px;
-    border:1px solid #bbb;
-}
-
-.preview-box {
-    position:relative;
-    display:inline-block;
-    margin:5px;
-}
-
-.preview-box button {
-    position:absolute;
-    top:-5px; right:-5px;
-    background:red;
-    width:22px; height:22px;
-    font-size:14px;
-    border-radius:50%;
-    padding:0;
-}
-</style>
-</head>
-
-<body>
-
-<header>سوق فلسطيني</header>
-
-<!-- -------------------- الأقسام -------------------- -->
-<div id="categories">
-    <div class="cat" onclick="chooseCategory('سيارات')">🚗 سيارات</div>
-    <div class="cat" onclick="chooseCategory('عقارات')">🏠 عقارات</div>
-    <div class="cat" onclick="chooseCategory('جوالات')">📱 جوالات</div>
-    <div class="cat" onclick="chooseCategory('وظائف')">💼 وظائف</div>
-    <div class="cat" onclick="chooseCategory('الكترونيات')">💻 الكترونيات</div>
-    <div class="cat" onclick="chooseCategory('أثاث')">🪑 أثاث</div>
-</div>
-
-
-<!-- -------------------- الخطوة 1: القسم -------------------- -->
-<div id="step1" class="step">
-    <h2>القسم المختار: <span id="selectedCat" style="color:green"></span></h2>
-    <button onclick="goToStep(2)">التالي</button>
-</div>
-
-
-<!-- -------------------- الخطوة 2: تفاصيل الإعلان -------------------- -->
-<div id="step2" class="step">
-
-    <h2>تفاصيل الإعلان</h2>
-
-    <label>عنوان الإعلان</label>
-    <input type="text" id="title">
-
-    <label>السعر</label>
-    <input type="number" id="price">
-
-    <label>الوصف</label>
-    <textarea id="desc"></textarea>
-
-    <label>الصور</label>
-    <input type="file" id="images" multiple accept="image/*">
-    <div id="preview"></div>
-
-    <button onclick="goToStep(3)">التالي</button>
-</div>
-
-
-<!-- -------------------- الخطوة 3: معلومات المعلن -------------------- -->
-<div id="step3" class="step">
-
-    <h2>معلومات المعلن</h2>
-
-    <label>الاسم</label>
-    <input type="text" id="name">
-
-    <label>رقم الهاتف</label>
-    <input type="text" id="phone">
-
-    <label>المدينة</label>
-    <select id="city">
-        <option>غزة</option>
-        <option>خان يونس</option>
-        <option>رفح</option>
-        <option>النصيرات</option>
-        <option>جباليا</option>
-    </select>
-
-    <button onclick="publishAd()">نشر الإعلان</button>
-</div>
-
-
-
-<!-- -------------------- السكربت -------------------- -->
-<script>
-
-function chooseCategory(cat){
-    document.getElementById("selectedCat").textContent = cat;
-    document.getElementById("categories").style.display="none";
-    goToStep(1);
-}
-
-function goToStep(num){
-    document.querySelectorAll(".step").forEach(s => s.style.display="none");
-    document.getElementById("step"+num).style.display="block";
-}
-
-
-
-/* -------------------- رفع ومعاينة الصور -------------------- */
-const inputImages = document.getElementById("images");
-const preview = document.getElementById("preview");
-
-inputImages.onchange = () => {
-    preview.innerHTML = "";
-
-    [...inputImages.files].forEach((file, index) => {
-        const reader = new FileReader();
-
-        reader.onload = e => {
-            const box = document.createElement("div");
-            box.className = "preview-box";
-
-            box.innerHTML = `
-                <img src="${e.target.result}">
-                <button onclick="removeImage(${index})">×</button>
-            `;
-            preview.appendChild(box);
-        };
-
-        reader.readAsDataURL(file);
-    });
-};
-
-
-function removeImage(index){
-    let dt = new DataTransfer();
-
-    [...inputImages.files]
-    .filter((file, i) => i !== index)
-    .forEach(file => dt.items.add(file));
-
-    inputImages.files = dt.files;
-    inputImages.onchange();
-}
-
-
-
-/* -------------------- نشر الإعلان -------------------- */
-function publishAd(){
-    alert("تم نشر إعلانك بنجاح 🎉");
-}
+/* من الرئيسية */
+function filterCategory(c){ loadAds(c); }
 
 </script>
 
