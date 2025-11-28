@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>أضف إعلان</title><link rel="stylesheet" href="style.css"></head>
+<body>
+  <div class="header">إضافة إعلان جديد</div>
+  <div class="container">
+    <div class="form">
+      <label>العنوان</label>
+      <input id="title" type="text" placeholder="مثال: للبيع سيارة تويوتا 2015">
+
+      <label>السعر (شيكل)</label>
+      <input id="price" type="number" placeholder="مثال: 25000">
+
+      <label>القسم</label>
+      <select id="category">
+        <option>سيارات</option><option>عقارات</option><option>وظائف</option><option>الكترونيات</option><option>موبايلات</option><option>أثاث</option>
+      </select>
+
+      <label>المدينة</label>
+      <select id="city">
+        <optgroup label="قطاع غزة">
+          <option>غزة</option><option>خان يونس</option><option>رفح</option><option>جباليا</option><option>النصيرات</option>
+        </optgroup>
+        <optgroup label="الضفة">
+          <option>رام الله</option><option>القدس</option><option>الخليل</option><option>نابلس</option><option>بيت لحم</option>
+        </optgroup>
+      </select>
+
+      <label>الوصف</label>
+      <textarea id="desc" placeholder="صف الإعلان بالتفصيل"></textarea>
+
+      <label>رقم الهاتف</label>
+      <input id="phone" type="text" placeholder="مثال: 0597xxxxxx">
+
+      <label>البريد الإلكتروني</label>
+      <input id="email" type="text" placeholder="مثال: you@mail.com">
+
+      <label>صور الإعلان (اختر ملفات)</label>
+      <input id="images" type="file" accept="image/*" multiple>
+      <div class="image-preview" id="preview"></div>
+
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn" onclick="onSubmit()">نشر الإعلان</button>
+        <button class="btn secondary" onclick="location.href='ads.html'">إلغاء</button>
+      </div>
+    </div>
+    <div class="footer">تنبيه: الصور تحفظ محلياً على متصفحك. لتظهر للآخرين ارفع الملفات إلى استضافة أو استخدم نسخة JSON على الموقع.</div>
+  </div>
+
+<script src="script.js"></script>
+<script>
+const inputImages = document.getElementById('images');
+const preview = document.getElementById('preview');
+let imageData = [];
+
+inputImages.addEventListener('change', async function(){
+  preview.innerHTML = '';
+  imageData = [];
+  const files = Array.from(this.files).slice(0,6); // حد 6 صور
+  for(const f of files){
+    try{
+      const url = await app.fileToDataUrl(f);
+      imageData.push(url);
+      const img = document.createElement('img');
+      img.src = url;
+      preview.appendChild(img);
+    }catch(e){ console.error(e); }
+  }
+});
+
+async function onSubmit(){
+  const title = document.getElementById('title').value.trim();
+  const price = document.getElementById('price').value.trim();
+  const category = document.getElementById('category').value;
+  const city = document.getElementById('city').value;
+  const desc = document.getElementById('desc').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const email = document.getElementById('email').value.trim();
+
+  if(!title){ alert('أدخل عنوان الإعلان'); return; }
+  if(!category){ alert('اختر القسم'); return; }
+  if(!city){ alert('اختر المدينة'); return; }
+  if(!phone){ if(!confirm('لم تدخل رقم هاتف. هل تريد المتابعة بدون هاتف؟')) return; }
+
+  const ad = {
+    id: (new Date()).getTime().toString(36) + Math.random().toString(36).slice(2,6),
+    title, price, category, city, desc, phone, email,
+    images: imageData.length ? imageData : ['https://via.placeholder.com/900x600?text=No+Image']
+  };
+
+  app.addAd(ad);
+  alert('تم نشر الإعلان بنجاح!');
+  location.href = `ad-details.html?id=${ad.id}`;
+}
+</script>
+</body>
+</html>

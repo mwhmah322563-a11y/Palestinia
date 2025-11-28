@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>تفاصيل الإعلان</title><link rel="stylesheet" href="style.css"></head>
+<body>
+  <div class="header">تفاصيل الإعلان</div>
+  <div class="container">
+    <div id="adArea">جاري التحميل...</div>
+    <div class="footer"></div>
+  </div>
+
+<script src="script.js"></script>
+<script>
+const id = app.getQuery('id');
+const ad = app.getAdById(id);
+
+if(!ad){
+  document.getElementById('adArea').innerHTML = '<div class="center">الإعلان غير موجود</div>';
+} else {
+  // العرض الأساسي
+  const html = `
+  <div class="ad-main">
+    <div>
+      <div class="ad-images">
+        <img id="mainImg" src="${ad.images[0] ? ad.images[0] : 'https://via.placeholder.com/900x600?text=صورة'}" alt="">
+        <div class="thumb-row" id="thumbs">
+          ${ (ad.images || []).map((im,idx)=>`<img src="${im}" data-idx="${idx}" class="${idx===0? 'selected':''}">`).join('') }
+        </div>
+      </div>
+
+      <div style="margin-top:12px;background:white;padding:12px;border-radius:10px">
+        <div style="font-size:20px;font-weight:800">${ad.title}</div>
+        <div style="margin-top:8px;color:var(--gold-1);font-weight:800">${app.fmt(ad.price)}</div>
+        <div style="margin-top:8px;color:var(--muted)">${ad.city} • ${ad.category}</div>
+        <div style="margin-top:12px">${ad.desc}</div>
+      </div>
+    </div>
+
+    <aside class="sidebar">
+      <div class="info-row"><div><label class="smallmuted">الاسم</label><div>${ad.email || '—'}</div></div></div>
+      <div class="info-row"><div><label class="smallmuted">الهاتف</label><div>${ad.phone || '—'}</div></div></div>
+      <div class="info-row"><div><label class="smallmuted">المدينة</label><div>${ad.city}</div></div></div>
+
+      <div style="margin-top:12px">
+        <button class="btn" onclick="openWhatsApp()">📲 تواصل عبر واتساب</button>
+        <button class="btn secondary" onclick="openMail()">✉️ إرسال بريد</button>
+      </div>
+
+      <div style="margin-top:12px">
+        <button class="btn small" style="background:#d32f2f" onclick="onDelete()">حذف الإعلان</button>
+      </div>
+    </aside>
+  </div>
+  `;
+  document.getElementById('adArea').innerHTML = html;
+
+  // thumbs click
+  document.querySelectorAll('#thumbs img').forEach(img=>{
+    img.addEventListener('click', function(){
+      document.querySelectorAll('#thumbs img').forEach(x=>x.classList.remove('selected'));
+      this.classList.add('selected');
+      document.getElementById('mainImg').src = this.src;
+    });
+  });
+
+  // actions
+  window.openWhatsApp = function(){
+    const wa = app.phoneToWa(ad.phone);
+    const text = encodeURIComponent(`مرحبا، بخصوص إعلان: ${ad.title}`);
+    window.open(`https://wa.me/${wa}?text=${text}`,'_blank');
+  };
+  window.openMail = function(){
+    const mail = ad.email || '';
+    window.location.href = `mailto:${mail}?subject=استفسار عن إعلان: ${encodeURIComponent(ad.title)}&body=مرحباً`;
+  };
+  window.onDelete = function(){
+    if(confirm('هل تريد حذف الإعلان؟ هذا الإجراء لا يمكن التراجع عنه.')){
+      app.deleteAd(ad.id);
+      alert('تم حذف الإعلان');
+      location.href = 'ads.html';
+    }
+  };
+}
+</script>
+</body>
+</html>

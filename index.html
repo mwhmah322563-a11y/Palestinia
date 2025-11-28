@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>سوق فلسطيني — الرئيسية</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>سوق فلسطيني — السوق الفلسطيني الذهبي</header>
+
+<div class="container">
+
+  <!-- شريط البحث والإجراءات -->
+  <div class="card" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <input id="homeSearch" placeholder="ابحث عن إعلان بالعنوان، المدينة أو الوصف" style="flex:1">
+    <button class="btn" onclick="onSearch()">🔍 بحث</button>
+    <button class="btn" onclick="location.href='add-ad.html'">➕ أضف إعلان</button>
+    <button class="btn" onclick="location.href='ads.html'">📢 عرض الإعلانات</button>
+  </div>
+
+  <!-- أقسام سريعة -->
+  <h3 style="margin:16px 0;color:#d4af37">الأقسام الشائعة</h3>
+  <div class="grid">
+    <div class="card" onclick="goCat('سيارات')">
+      <img class="ad-img" src="https://via.placeholder.com/600x400?text=سيارات" alt="">
+      <div class="title">🚗 سيارات</div>
+      <div class="price">أحدث العروض</div>
+    </div>
+
+    <div class="card" onclick="goCat('عقارات')">
+      <img class="ad-img" src="https://via.placeholder.com/600x400?text=عقارات" alt="">
+      <div class="title">🏠 عقارات</div>
+      <div class="price">شقق، بيوت، أراضي</div>
+    </div>
+
+    <div class="card" onclick="goCat('وظائف')">
+      <img class="ad-img" src="https://via.placeholder.com/600x400?text=وظائف" alt="">
+      <div class="title">💼 وظائف</div>
+      <div class="price">اعلانات توظيف</div>
+    </div>
+
+    <div class="card" onclick="goCat('موبايلات')">
+      <img class="ad-img" src="https://via.placeholder.com/600x400?text=موبايلات" alt="">
+      <div class="title">📱 موبايلات</div>
+      <div class="price">جوالات وأكسسوارات</div>
+    </div>
+
+    <div class="card" onclick="goCat('الكترونيات')">
+      <img class="ad-img" src="https://via.placeholder.com/600x400?text=الكترونيات" alt="">
+      <div class="title">🔌 إلكترونيات</div>
+      <div class="price">أجهزة وكماليات</div>
+    </div>
+
+    <div class="card" onclick="goCat('أثاث')">
+      <img class="ad-img" src="https://via.placeholder.com/600x400?text=أثاث" alt="">
+      <div class="title">🛋️ أثاث</div>
+      <div class="price">عروض مميزة</div>
+    </div>
+  </div>
+
+  <div style="height:18px"></div>
+  <div class="card center">
+    <small style="color:#bbb">مبني بنظام محلي (LocalStorage). لرفع الموقع للعامة استخدم GitHub Pages أو Netlify.</small>
+  </div>
+
+</div>
+
+<script>
+function onSearch(){
+  const q = document.getElementById('homeSearch').value.trim();
+  if(!q) { alert('اكتب كلمة للبحث'); return; }
+  location.href = 'ads.html?q=' + encodeURIComponent(q);
+}
+function goCat(cat){
+  location.href = 'ads.html?cat=' + encodeURIComponent(cat);
+}
+
+// Enter key search
+document.getElementById('homeSearch').addEventListener('keydown', function(e){
+  if(e.key === 'Enter') onSearch();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>الإعلانات</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="header" id="hdrTitle">الإعلانات</div>
+  <div class="container">
+    <div class="topbar">
+      <div class="search">
+        <input id="qInput" placeholder="بحث بالعنوان، المدينة أو الوصف" onkeyup="onKeySearch(event)">
+      </div>
+      <div class="actions">
+        <button class="btn small" onclick="location.href='add-ad.html'">أضف إعلان</button>
+        <button class="btn small secondary" onclick="loadAndRender()">تحديث</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <select id="cityFilter" style="padding:8px;border-radius:8px;border:1px solid #e6ddd0">
+        <option value="">— كل المدن —</option>
+        <optgroup label="قطاع غزة">
+          <option>غزة</option><option>خان يونس</option><option>رفح</option><option>جباليا</option><option>النصيرات</option>
+        </optgroup>
+        <optgroup label="الضفة الغربية">
+          <option>القدس</option><option>رام الله</option><option>الخليل</option><option>نابلس</option><option>بيت لحم</option>
+        </optgroup>
+      </select>
+
+      <select id="catFilter" style="padding:8px;border-radius:8px;border:1px solid #e6ddd0">
+        <option value="">— كل الأقسام —</option>
+        <option>سيارات</option><option>عقارات</option><option>وظائف</option><option>الكترونيات</option><option>موبايلات</option><option>أثاث</option>
+      </select>
+
+      <button class="btn small" onclick="applyFilters()">تطبيق</button>
+      <button class="btn small secondary" onclick="resetFilters()">إلغاء</button>
+    </div>
+
+    <div id="grid" class="grid"></div>
+
+    <div class="footer">© سوق فلسطيني</div>
+  </div>
+
+<script src="script.js"></script>
+<script>
+/* قراءة باراميتر q أو cat من الرابط لتطبيق بحث تلقائي */
+const url = new URL(location.href);
+const qParam = url.searchParams.get('q') || '';
+const catParam = url.searchParams.get('cat') || '';
+const cityParam = url.searchParams.get('city') || '';
+
+if(qParam) document.getElementById('qInput').value = decodeURIComponent(qParam);
+if(catParam) { document.getElementById('catFilter').value = catParam; document.getElementById('hdrTitle').textContent = catParam; }
+if(cityParam) document.getElementById('cityFilter').value = cityParam;
+
+function renderAds(list){
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  if(!list.length){ grid.innerHTML = '<div class="center">لا توجد نتائج</div>'; return; }
+
+  list.forEach(ad=>{
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+      <img src="${ad.images && ad.images[0] ? ad.images[0] : 'https://via.placeholder.com/900x600?text=صورة'}">
+      <div class="title">${ad.title}</div>
+      <div class="price">${ad.price ? ad.price + ' شيكل' : 'اتفاق'}</div>
+      <div class="meta"><span>${ad.city}</span><span>${ad.category}</span></div>
+    `;
+    div.onclick = ()=> location.href = `ad-details.html?id=${ad.id}`;
+    grid.appendChild(div);
+  });
+}
+
+function loadAndRender(){
+  let ads = app.loadAds();
+  // تطبيق فلترة بحثية
+  const q = document.getElementById('qInput').value.trim().toLowerCase();
+  const cat = document.getElementById('catFilter').value;
+  const city = document.getElementById('cityFilter').value;
+
+  let results = ads.filter(a=>{
+    let ok = true;
+    if(q){
+      ok = (a.title + ' ' + (a.desc||'') + ' ' + a.city + ' ' + a.category).toLowerCase().includes(q);
+    }
+    if(ok && cat) ok = a.category === cat;
+    if(ok && city) ok = a.city === city;
+    return ok;
+  });
+
+  renderAds(results);
+}
+
+/* event handlers */
+function applyFilters(){ loadAndRender(); }
+function resetFilters(){ document.getElementById('qInput').value=''; document.getElementById('catFilter').value=''; document.getElementById('cityFilter').value=''; loadAndRender(); }
+function onKeySearch(e){ if(e.key === 'Enter') loadAndRender(); }
+
+/* init */
+loadAndRender();
+</script>
+</body>
+</html>
